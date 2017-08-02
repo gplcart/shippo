@@ -181,7 +181,7 @@ class Shippo extends Model
         }
 
         // Forbid further processing if shipping component has not been set
-        if (!isset($order['data']['components']['shipping'])) {
+        if (!isset($order['data']['components']['shipping']['price'])) {
             $result = array(
                 'severity' => 'danger',
                 'redirect' => 'checkout',
@@ -195,7 +195,7 @@ class Shippo extends Model
         $this->setShippingMethod($method, $rates, $order['currency']);
 
         // Forbid further processing and redirect back if shipping rates don't match
-        if (isset($method['price']) && $method['price'] != $order['data']['components']['shipping']) {
+        if (isset($method['price']) && $method['price'] != $order['data']['components']['shipping']['price']) {
             $result = array(
                 'severity' => 'danger',
                 'redirect' => 'checkout',
