@@ -33,7 +33,7 @@ class Label extends BackendController
 
     /**
      * @param OrderModel $order
-     * @param ModuleShippoModel $shippo
+     * @param ModuleShippoModel $api
      */
     public function __construct(OrderModel $order, ModuleShippoModel $api)
     {
