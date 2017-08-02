@@ -1,0 +1,13 @@
+{
+    "name": "gplcart/shippo",
+    "type": "gplcart-module",
+    "description": "Shippo API instegration",
+    "keywords": ["gplcart", "ecommerce", "shopping cart", "gplcart module", "php", "shippo", "shipping-label", "carriers"],
+    "license": "GPL-3.0+",
+    "require": {
+        "gplcart/composer-module-installer": "*",
+        "ext-curl": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
