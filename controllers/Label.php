@@ -55,9 +55,8 @@ class Label extends BackendController
         $this->setFilterListLabel();
 
         $limit = $this->setPager($this->getTotalListLabel());
-
-        $this->setData('orders', $this->getOrdersListLabel($limit));
         $this->setData('statuses', $this->order->getStatuses());
+        $this->setData('orders', $this->getOrdersListLabel($limit));
 
         $this->outputListLabel();
     }
@@ -161,7 +160,10 @@ class Label extends BackendController
         );
 
         $this->order->update($order_id, $data);
-        $this->redirect('admin/tool/shippo', $this->text('Shipping label and tracking number have been saved'), 'success');
+
+        $vars = array('%num' => $response['tracking_number'], '@href' => $response['label_url']);
+        $message = $this->text('Label has been <a target="_blank" href="@href">created</a>. Shipping tracking number: %num', $vars);
+        $this->redirect('admin/tool/shippo', $message, 'success');
     }
 
     /**
