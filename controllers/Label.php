@@ -162,7 +162,7 @@ class Label extends BackendController
         $this->order->update($order_id, $data);
 
         $vars = array('%num' => $response['tracking_number'], '@href' => $response['label_url']);
-        $message = $this->text('Label has been <a target="_blank" href="@href">created</a>. Shipping tracking number: %num', $vars);
+        $message = $this->text('Label has been <a target="_blank" href="@href">created</a>. Tracking number: %num', $vars);
         $this->redirect('admin/tool/shippo', $message, 'success');
     }
 
