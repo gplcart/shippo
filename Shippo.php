@@ -92,12 +92,12 @@ class Shippo extends Module
     /**
      * Implements hook "order.submit.before"
      * @param array $order
-     * @param array $o
+     * @param array $options
      * @param array $result
      */
-    public function hookOrderSubmitBefore(array &$order, $o, array &$result)
+    public function hookOrderSubmitBefore(&$order, $options, &$result)
     {
-        $this->getShippoModel()->validate($order, $result);
+        $this->getShippoModel()->validate($order, $options, $result);
     }
 
     /**
@@ -106,14 +106,18 @@ class Shippo extends Module
      */
     public function hookShippingMethods(array &$methods)
     {
+        $language = $this->getLanguage();
         $settings = $this->config->module('shippo');
 
-        foreach ($this->getShippoModel()->getServiceNames() as $id => $service) {
+        foreach ($this->getShippoModel()->getServiceNames() as $id => $info) {
+
+            list($carrier, $service) = $info;
+
             $methods["shippo_$id"] = array(
                 'dynamic' => true,
                 'module' => 'shippo',
-                'title' => implode(' - ', $service),
-                'status' => in_array("shippo_$id", $settings['enabled'])
+                'status' => in_array("shippo_$id", $settings['enabled']),
+                'title' => $language->text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
             );
         }
     }
@@ -157,12 +161,12 @@ class Shippo extends Module
     public function hookModuleInstallBefore(&$result)
     {
         if (!function_exists('curl_init')) {
-            $result = 'CURL library is not enabled';
+            $result = $this->getLanguage()->text('CURL library is not enabled');
         }
     }
 
     /**
-     * Returns Shippo model instance
+     * Returns Shippo's model instance
      * @return \gplcart\modules\shippo\models\Shippo
      */
     public function getShippoModel()

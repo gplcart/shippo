@@ -42,9 +42,6 @@ class CurlClient
         $curlOptions[CURLOPT_TIMEOUT] = 80;
         $curlOptions[CURLOPT_HTTPHEADER] = $headers;
         
-$curlOptions[CURLOPT_SSL_VERIFYHOST] = FALSE; 
-$curlOptions[CURLOPT_SSL_VERIFYPEER] = FALSE;
-        
         curl_setopt_array($curl, $curlOptions);
         $httpBody = curl_exec($curl);
         

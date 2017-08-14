@@ -170,9 +170,10 @@ class Shippo extends Model
     /**
      * Validates order shipping rates before an order is created
      * @param array $order
+     * @param array $options
      * @param array $result
      */
-    public function validate(array &$order, array &$result)
+    public function validate(array &$order, $options, array &$result)
     {
         $method = $this->shipping->get($order['shipping']);
 
@@ -180,13 +181,15 @@ class Shippo extends Model
             return null;
         }
 
+        $error_result = array(
+            'severity' => 'danger',
+            'redirect' => '', // Stay on the same page
+            'message' => $this->language->text('Please recalculate shipping rates')
+        );
+
         // Forbid further processing if shipping component has not been set
-        if (!isset($order['data']['components']['shipping']['price'])) {
-            $result = array(
-                'severity' => 'danger',
-                'redirect' => 'checkout',
-                'message' => $this->language->text('Please recalculate shipping rates')
-            );
+        if (!isset($order['data']['components']['shipping']['price']) && empty($options['admin'])) {
+            $result = $error_result;
             return null;
         }
 
@@ -195,12 +198,10 @@ class Shippo extends Model
         $this->setShippingMethod($method, $rates, $order['currency']);
 
         // Forbid further processing and redirect back if shipping rates don't match
-        if (isset($method['price']) && $method['price'] != $order['data']['components']['shipping']['price']) {
-            $result = array(
-                'severity' => 'danger',
-                'redirect' => 'checkout',
-                'message' => $this->language->text('Please recalculate shipping rates')
-            );
+        // Validate only "normal" submits.
+        // In admin mode shipping prices can be adjusted by administrator
+        if (empty($options['admin']) && isset($method['price']) && $method['price'] != $order['data']['components']['shipping']['price']) {
+            $result = $error_result;
             return null;
         }
 
