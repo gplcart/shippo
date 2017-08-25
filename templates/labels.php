@@ -6,6 +6,9 @@
  * @license https://www.gnu.org/licenses/gpl.html GNU/GPLv3
  */
 ?>
+<?php if(empty($orders)) { ?>
+<?php echo $this->text('There are no items yet'); ?>
+<?php } else { ?>
 <div class="table-condensed">
   <table class="table shipping-labels">
     <thead>
@@ -94,4 +97,5 @@
 </div>
 <?php if (!empty($_pager)) { ?>
 <?php echo $_pager; ?>
+<?php } ?>
 <?php } ?>
