@@ -133,8 +133,8 @@ class Label extends BackendController
     {
         $this->controlAccess('order_edit');
 
-        $order_id = $this->getQuery('order_id', '', 'string');
-        $object_id = $this->getQuery('get_label', '', 'string');
+        $order_id = $this->getQuery('order_id', '');
+        $object_id = $this->getQuery('get_label', '');
 
         if (empty($object_id) || empty($order_id)) {
             return null;
