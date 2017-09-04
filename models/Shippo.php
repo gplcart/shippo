@@ -114,10 +114,10 @@ class Shippo extends Model
      * @param ConvertorHelper $convertor
      */
     public function __construct(ShippoApiModel $api, LanguageModel $language,
-            UserModel $user, PriceModel $price, CurrencyModel $currency,
-            AddressModel $address, StoreModel $store, StateModel $state,
-            ShippingModel $shipping, SessionHelper $session,
-            ConvertorHelper $convertor)
+                                UserModel $user, PriceModel $price, CurrencyModel $currency,
+                                AddressModel $address, StoreModel $store, StateModel $state,
+                                ShippingModel $shipping, SessionHelper $session,
+                                ConvertorHelper $convertor)
     {
         parent::__construct();
 
@@ -172,6 +172,7 @@ class Shippo extends Model
      * @param array $order
      * @param array $options
      * @param array $result
+     * @return null|bool
      */
     public function validate(array &$order, $options, array &$result)
     {
@@ -190,7 +191,7 @@ class Shippo extends Model
         // Forbid further processing if shipping component has not been set
         if (!isset($order['data']['components']['shipping']['price']) && empty($options['admin'])) {
             $result = $error_result;
-            return null;
+            return false;
         }
 
         $rates = $this->getRates($order['shipping_address'], $order['cart'], $order);
@@ -202,11 +203,12 @@ class Shippo extends Model
         // In admin mode shipping prices can be adjusted by administrator
         if (empty($options['admin']) && isset($method['price']) && $method['price'] != $order['data']['components']['shipping']['price']) {
             $result = $error_result;
-            return null;
+            return false;
         }
 
         // Save Shippo request in the order data to get later labels etc.
         $order['data']['shippo'] = $method['data'];
+        return true;
     }
 
     /**
@@ -445,10 +447,10 @@ class Shippo extends Model
 
         foreach ($cart['items'] as $item) {
             $product = $item['product'];
-            $width[] = (float) $this->convertor->convert($product['width'], $product['size_unit'], $order['size_unit']);
-            $height[] = (float) $this->convertor->convert($product['height'], $product['size_unit'], $order['size_unit']);
-            $length[] = (float) $this->convertor->convert($product['length'], $product['size_unit'], $order['size_unit']);
-            $weight[] = (float) $this->convertor->convert($product['weight'], $product['weight_unit'], $order['weight_unit']);
+            $width[] = (float)$this->convertor->convert($product['width'], $product['size_unit'], $order['size_unit']);
+            $height[] = (float)$this->convertor->convert($product['height'], $product['size_unit'], $order['size_unit']);
+            $length[] = (float)$this->convertor->convert($product['length'], $product['size_unit'], $order['size_unit']);
+            $weight[] = (float)$this->convertor->convert($product['weight'], $product['weight_unit'], $order['weight_unit']);
         }
 
         $result = array(
