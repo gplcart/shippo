@@ -32,8 +32,8 @@ class Shippo extends Module
     public function hookLibraryList(array &$libraries)
     {
         $libraries['shippo'] = array(
-            'name' => 'Shippo',
-            'description' => 'Shipping API PHP library (USPS, FedEx, UPS and more)',
+            'name' => /* @text */'Shippo',
+            'description' => /* @text */'Shipping API PHP library (USPS, FedEx, UPS and more)',
             'url' => 'https://github.com/goshippo/shippo-php-client',
             'download' => 'https://github.com/goshippo/shippo-php-client/archive/v1.3.2.zip',
             'type' => 'php',
@@ -64,7 +64,7 @@ class Shippo extends Module
 
         $routes['admin/tool/shippo'] = array(
             'access' => 'shippo_label',
-            'menu' => array('admin' => 'Shipping labels'),
+            'menu' => array('admin' => /* @text */'Shipping labels'),
             'handlers' => array(
                 'controller' => array('gplcart\\modules\\shippo\\controllers\\Label', 'listLabel')
             )
@@ -77,7 +77,7 @@ class Shippo extends Module
      */
     public function hookUserRolePermissions(array &$permissions)
     {
-        $permissions['shippo_label'] = 'Shippo: view and buy labels';
+        $permissions['shippo_label'] = /* @text */'Shippo: view and buy labels';
     }
 
     /**

@@ -14,7 +14,7 @@
         <div class="checkbox">
           <label>
             <input name="settings[test]" type="checkbox"<?php echo empty($settings['test']) ? '' : ' checked'; ?>> <?php echo $this->text('Test mode'); ?>
-            <div class="help-block"><?php echo $this->text('If selected all requests to Shippo will be made with test token and will not be charged'); ?></div>
+            <div class="help-block"><?php echo $this->text('If selected all requests to Shippo will be made with the test token and will not be charged'); ?></div>
           </label>
         </div>
       </div>
@@ -149,7 +149,7 @@
           <span class="input-group-addon" id="basic-addon1">USD</span>
           <input name="settings[default][price]" class="form-control" value="<?php echo $this->e($settings['default']['price']); ?>">
         </div>
-        <div class="help-block"><?php echo $this->text('If Shippo failed to calculate shipping rates and default method is enabled and shown, use this amount as shipping cost'); ?></div>
+        <div class="help-block"><?php echo $this->text('If Shippo failed to calculate shipping rates and default method is enabled and shown, use this amount as a shipping cost'); ?></div>
       </div>
     </div>
     <div class="form-group">

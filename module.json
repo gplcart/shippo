@@ -1,7 +1,7 @@
 {
     "name": "Shippo",
     "version": "1.0.0-dev",
-    "description": "Shippo API instegration",
+    "description": "Adds various shipping methods using Shippo's multi-carrier shipping API",
     "author": "Iurii Makukh <gplcart.software@gmail.com>",
     "core": "1.x",
     "license": "GPL-3.0+",
