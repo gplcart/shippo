@@ -83,7 +83,7 @@
           <?php if (isset($order['data']['shippo']['object_id']) && $this->access('order_edit')) { ?>
           <ul class="list-inline">
             <li>
-              <a onclick="return confirm(GplCart.text('Creating labels is a paid feature unless you operate in test mode. Please confirm'));" href="<?php echo $this->url('', array('get_label' => $order['data']['shippo']['object_id'], 'order_id' => $id)); ?>">
+              <a onclick="return confirm(Gplcart.text('Creating labels is a paid feature unless you operate in test mode. Please confirm'));" href="<?php echo $this->url('', array('get_label' => $order['data']['shippo']['object_id'], 'order_id' => $id)); ?>">
                 <?php echo $this->text('get shipping label and tracking number'); ?>
               </a>
             </li>
