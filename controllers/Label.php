@@ -54,7 +54,7 @@ class Label extends BackendController
         $this->setBreadcrumbListLabel();
         $this->setFilterListLabel();
 
-        $limit = $this->setPager($this->getTotalListLabel());
+        $limit = $this->setPager(array('total' => $this->getTotalListLabel()));
         $this->setData('statuses', $this->order->getStatuses());
         $this->setData('orders', $this->getOrdersListLabel($limit));
 
