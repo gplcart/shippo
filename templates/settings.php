@@ -82,8 +82,8 @@
       <label class="col-md-2 control-label"><?php echo $this->text('Country'); ?></label>
       <div class="col-md-4">
         <select name="settings[sender][country]" class="form-control">
-          <?php foreach ($countries as $code => $name) { ?>
-          <option value="<?php echo $this->e($code); ?>"<?php echo $settings['sender']['country'] == $code ? ' selected' : ''; ?>><?php echo $this->e($name); ?></option>
+          <?php foreach ($countries as $code => $country) { ?>
+          <option value="<?php echo $this->e($code); ?>"<?php echo $settings['sender']['country'] == $code ? ' selected' : ''; ?>><?php echo $this->e($country['name']); ?></option>
           <?php } ?>
         </select>
       </div>
