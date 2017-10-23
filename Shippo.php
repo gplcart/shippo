@@ -171,7 +171,9 @@ class Shippo extends Module
      */
     public function getShippoModel()
     {
-        return $this->getModel('Shippo', 'shippo');
+        /* @var $model \gplcart\modules\shippo\models\Shippo */
+        $model = $this->getModel('Shippo', 'shippo');
+        return $model;
     }
 
 }
