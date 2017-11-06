@@ -9,20 +9,20 @@
 
 namespace gplcart\modules\shippo\models;
 
-use gplcart\core\Model,
+use gplcart\core\Config,
     gplcart\core\Library;
 
 /**
  * Manages basic behaviors and data related to Shippo API
  */
-class Api extends Model
+class Api
 {
 
     /**
-     * An array of Shippo module settings
-     * @var array
+     * Config class instance
+     * @var \gplcart\core\Config $config
      */
-    protected $settings;
+    protected $config;
 
     /**
      * Library class instance
@@ -31,14 +31,20 @@ class Api extends Model
     protected $library;
 
     /**
+     * An array of Shippo module settings
+     * @var array
+     */
+    protected $settings;
+
+    /**
+     * @param Config $config
      * @param Library $library
      */
-    public function __construct(Library $library)
+    public function __construct(Config $config, Library $library)
     {
-        parent::__construct();
-
+        $this->config = $config;
         $this->library = $library;
-        $this->settings = $this->config->module('shippo');
+        $this->settings = $this->config->getFromModule('shippo');
     }
 
     /**

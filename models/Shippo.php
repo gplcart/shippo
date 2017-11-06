@@ -9,7 +9,7 @@
 
 namespace gplcart\modules\shippo\models;
 
-use gplcart\core\Model;
+use gplcart\core\Config;
 use gplcart\core\models\Language as LanguageModel,
     gplcart\core\models\User as UserModel,
     gplcart\core\models\Price as PriceModel,
@@ -25,8 +25,14 @@ use gplcart\modules\shippo\models\Api as ShippoApiModel;
 /**
  * Manages basic behaviors and data related to Shippo module
  */
-class Shippo extends Model
+class Shippo
 {
+
+    /**
+     * Config class instance
+     * @var \gplcart\core\Config $config
+     */
+    protected $config;
 
     /**
      * An array of Shippo module settings
@@ -101,6 +107,7 @@ class Shippo extends Model
     protected $session;
 
     /**
+     * @param Config $config
      * @param ShippoApiModel $api
      * @param LanguageModel $language
      * @param UserModel $user
@@ -113,14 +120,11 @@ class Shippo extends Model
      * @param SessionHelper $session
      * @param ConvertorHelper $convertor
      */
-    public function __construct(ShippoApiModel $api, LanguageModel $language,
-                                UserModel $user, PriceModel $price, CurrencyModel $currency,
-                                AddressModel $address, StoreModel $store, StateModel $state,
-                                ShippingModel $shipping, SessionHelper $session,
-                                ConvertorHelper $convertor)
+    public function __construct(Config $config, ShippoApiModel $api, LanguageModel $language,
+            UserModel $user, PriceModel $price, CurrencyModel $currency, AddressModel $address,
+            StoreModel $store, StateModel $state, ShippingModel $shipping, SessionHelper $session,
+            ConvertorHelper $convertor)
     {
-        parent::__construct();
-
         $this->api = $api;
         $this->user = $user;
         $this->price = $price;
@@ -133,7 +137,8 @@ class Shippo extends Model
         $this->shipping = $shipping;
         $this->convertor = $convertor;
 
-        $this->settings = $this->config->module('shippo');
+        $this->config = $config;
+        $this->settings = $this->config->getFromModule('shippo');
     }
 
     /**
@@ -447,10 +452,10 @@ class Shippo extends Model
 
         foreach ($cart['items'] as $item) {
             $product = $item['product'];
-            $width[] = (float)$this->convertor->convert($product['width'], $product['size_unit'], $order['size_unit']);
-            $height[] = (float)$this->convertor->convert($product['height'], $product['size_unit'], $order['size_unit']);
-            $length[] = (float)$this->convertor->convert($product['length'], $product['size_unit'], $order['size_unit']);
-            $weight[] = (float)$this->convertor->convert($product['weight'], $product['weight_unit'], $order['weight_unit']);
+            $width[] = (float) $this->convertor->convert($product['width'], $product['size_unit'], $order['size_unit']);
+            $height[] = (float) $this->convertor->convert($product['height'], $product['size_unit'], $order['size_unit']);
+            $length[] = (float) $this->convertor->convert($product['length'], $product['size_unit'], $order['size_unit']);
+            $weight[] = (float) $this->convertor->convert($product['weight'], $product['weight_unit'], $order['weight_unit']);
         }
 
         $result = array(

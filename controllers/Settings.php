@@ -71,7 +71,7 @@ class Settings extends BackendController
         $this->setBreadcrumbEditSettings();
 
         $this->setData('countries', $this->country->getIso());
-        $this->setData('settings', $this->config->module('shippo'));
+        $this->setData('settings', $this->config->getFromModule('shippo'));
         $this->setData('methods', $this->getShippingMethodsSettings());
 
         $this->submitSettings();

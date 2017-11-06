@@ -9,7 +9,8 @@
 
 namespace gplcart\modules\shippo;
 
-use gplcart\core\Module;
+use gplcart\core\Module,
+    gplcart\core\Config;
 
 /**
  * Main class for Shippo module
@@ -18,11 +19,11 @@ class Shippo extends Module
 {
 
     /**
-     * Constructor
+     * @param Config $config
      */
-    public function __construct()
+    public function __construct(Config $config)
     {
-        parent::__construct();
+        parent::__construct($config);
     }
 
     /**
@@ -107,7 +108,7 @@ class Shippo extends Module
     public function hookShippingMethods(array &$methods)
     {
         $language = $this->getLanguage();
-        $settings = $this->config->module('shippo');
+        $settings = $this->config->getFromModule('shippo');
 
         foreach ($this->getShippoModel()->getServiceNames() as $id => $info) {
 
