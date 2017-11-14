@@ -107,20 +107,7 @@ class Shippo extends Module
      */
     public function hookShippingMethods(array &$methods)
     {
-        $language = $this->getLanguage();
-        $settings = $this->config->getFromModule('shippo');
-
-        foreach ($this->getShippoModel()->getServiceNames() as $id => $info) {
-
-            list($carrier, $service) = $info;
-
-            $methods["shippo_$id"] = array(
-                'dynamic' => true,
-                'module' => 'shippo',
-                'status' => in_array("shippo_$id", $settings['enabled']),
-                'title' => $language->text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
-            );
-        }
+        $this->setShippingMethods($methods);
     }
 
     /**
@@ -175,6 +162,26 @@ class Shippo extends Module
         /* @var $model \gplcart\modules\shippo\models\Shippo */
         $model = $this->getModel('Shippo', 'shippo');
         return $model;
+    }
+
+    /**
+     * Sets module shipping methods
+     * @param array $methods
+     */
+    protected function setShippingMethods(array &$methods)
+    {
+        $language = $this->getLanguage();
+        $settings = $this->config->getFromModule('shippo');
+
+        foreach ($this->getShippoModel()->getServiceNames() as $id => $info) {
+            list($carrier, $service) = $info;
+            $methods["shippo_$id"] = array(
+                'dynamic' => true,
+                'module' => 'shippo',
+                'status' => in_array("shippo_$id", $settings['enabled']),
+                'title' => $language->text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
+            );
+        }
     }
 
 }

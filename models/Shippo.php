@@ -147,7 +147,7 @@ class Shippo
      */
     public function getCarrierNames()
     {
-        return require __DIR__ . '/../config/carriers.php';
+        return gplcart_config_get(__DIR__ . '/../config/carriers.php');
     }
 
     /**
@@ -156,7 +156,7 @@ class Shippo
      */
     public function getServiceNames()
     {
-        return require __DIR__ . '/../config/services.php';
+        return gplcart_config_get(__DIR__ . '/../config/services.php');
     }
 
     /**
