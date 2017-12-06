@@ -10,20 +10,35 @@
 namespace gplcart\modules\shippo;
 
 use gplcart\core\Module,
-    gplcart\core\Config;
+    gplcart\core\Library,
+    gplcart\core\Container;
 
 /**
  * Main class for Shippo module
  */
-class Shippo extends Module
+class Shippo
 {
 
     /**
-     * @param Config $config
+     * Module class instance
+     * @var \gplcart\core\Module $module
      */
-    public function __construct(Config $config)
+    protected $module;
+
+    /**
+     * Library class instance
+     * @var \gplcart\core\Library $library
+     */
+    protected $library;
+
+    /**
+     * @param Module $module
+     * @param Library $library
+     */
+    public function __construct(Module $module, Library $library)
     {
-        parent::__construct($config);
+        $this->module = $module;
+        $this->library = $library;
     }
 
     /**
@@ -73,6 +88,17 @@ class Shippo extends Module
     }
 
     /**
+     * Implements hook "module.install.before"
+     * @param mixed $result
+     */
+    public function hookModuleInstallBefore(&$result)
+    {
+        if (!extension_loaded('curl')) {
+            $result = $this->getLanguage()->text('CURL library is not enabled');
+        }
+    }
+
+    /**
      * Implements hook "user.role.permissions"
      * @param array $permissions
      */
@@ -87,7 +113,7 @@ class Shippo extends Module
      */
     public function hookOrderCalculateBefore(array &$data)
     {
-        $this->getShippoModel()->calculate($data);
+        $this->getModel()->calculate($data);
     }
 
     /**
@@ -98,7 +124,7 @@ class Shippo extends Module
      */
     public function hookOrderSubmitBefore(&$order, $options, &$result)
     {
-        $this->getShippoModel()->validate($order, $options, $result);
+        $this->getModel()->validate($order, $options, $result);
     }
 
     /**
@@ -115,7 +141,7 @@ class Shippo extends Module
      */
     public function hookModuleEnableAfter()
     {
-        $this->getLibrary()->clearCache();
+        $this->library->clearCache();
     }
 
     /**
@@ -123,7 +149,7 @@ class Shippo extends Module
      */
     public function hookModuleDisableAfter()
     {
-        $this->getLibrary()->clearCache();
+        $this->library->clearCache();
     }
 
     /**
@@ -131,7 +157,7 @@ class Shippo extends Module
      */
     public function hookModuleInstallAfter()
     {
-        $this->getLibrary()->clearCache();
+        $this->library->clearCache();
     }
 
     /**
@@ -139,29 +165,7 @@ class Shippo extends Module
      */
     public function hookModuleUninstallAfter()
     {
-        $this->getLibrary()->clearCache();
-    }
-
-    /**
-     * Implements hook "module.install.before"
-     * @param mixed $result
-     */
-    public function hookModuleInstallBefore(&$result)
-    {
-        if (!function_exists('curl_init')) {
-            $result = $this->getLanguage()->text('CURL library is not enabled');
-        }
-    }
-
-    /**
-     * Returns Shippo's model instance
-     * @return \gplcart\modules\shippo\models\Shippo
-     */
-    public function getShippoModel()
-    {
-        /* @var $model \gplcart\modules\shippo\models\Shippo */
-        $model = $this->getModel('Shippo', 'shippo');
-        return $model;
+        $this->library->clearCache();
     }
 
     /**
@@ -170,18 +174,35 @@ class Shippo extends Module
      */
     protected function setShippingMethods(array &$methods)
     {
-        $language = $this->getLanguage();
-        $settings = $this->config->getFromModule('shippo');
+        $settings = $this->module->getSettings('shippo');
 
-        foreach ($this->getShippoModel()->getServiceNames() as $id => $info) {
+        foreach ($this->getModel()->getServiceNames() as $id => $info) {
             list($carrier, $service) = $info;
             $methods["shippo_$id"] = array(
                 'dynamic' => true,
                 'module' => 'shippo',
                 'status' => in_array("shippo_$id", $settings['enabled']),
-                'title' => $language->text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
+                'title' => $this->getLanguage()->text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
             );
         }
+    }
+
+    /**
+     * Returns Shippo's model instance
+     * @return \gplcart\modules\shippo\models\Shippo
+     */
+    public function getModel()
+    {
+        return Container::get('gplcart\\modules\\shippo\\models\\Shippo');
+    }
+
+    /**
+     * Language model class instance
+     * @return \gplcart\core\models\Language
+     */
+    protected function getLanguage()
+    {
+        return Container::get('gplcart\\core\\models\\Language');
     }
 
 }

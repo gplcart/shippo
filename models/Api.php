@@ -9,8 +9,8 @@
 
 namespace gplcart\modules\shippo\models;
 
-use gplcart\core\Config,
-    gplcart\core\Library;
+use gplcart\core\Library,
+    gplcart\core\Module;
 
 /**
  * Manages basic behaviors and data related to Shippo API
@@ -19,10 +19,10 @@ class Api
 {
 
     /**
-     * Config class instance
-     * @var \gplcart\core\Config $config
+     * Module class instance
+     * @var \gplcart\core\Module $module
      */
-    protected $config;
+    protected $module;
 
     /**
      * Library class instance
@@ -31,20 +31,13 @@ class Api
     protected $library;
 
     /**
-     * An array of Shippo module settings
-     * @var array
-     */
-    protected $settings;
-
-    /**
-     * @param Config $config
      * @param Library $library
+     * @param Module $module
      */
-    public function __construct(Config $config, Library $library)
+    public function __construct(Library $library, Module $module)
     {
-        $this->config = $config;
+        $this->module = $module;
         $this->library = $library;
-        $this->settings = $this->config->getFromModule('shippo');
     }
 
     /**
@@ -53,11 +46,13 @@ class Api
      */
     protected function getToken()
     {
-        if (empty($this->settings['test'])) {
-            return $this->settings['key']['live'];
+        $settings = $this->module->getSettings('shippo');
+
+        if (empty($settings['test'])) {
+            return $settings['key']['live'];
         }
 
-        return $this->settings['key']['test'];
+        return $settings['key']['test'];
     }
 
     /**

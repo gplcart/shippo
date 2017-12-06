@@ -9,7 +9,7 @@
 
 namespace gplcart\modules\shippo\models;
 
-use gplcart\core\Config;
+use gplcart\core\Module;
 use gplcart\core\models\Language as LanguageModel,
     gplcart\core\models\User as UserModel,
     gplcart\core\models\Price as PriceModel,
@@ -27,18 +27,12 @@ use gplcart\modules\shippo\models\Api as ShippoApiModel;
  */
 class Shippo
 {
-
+    
     /**
-     * Config class instance
-     * @var \gplcart\core\Config $config
+     * Module class instance
+     * @var \gplcart\core\Module $module
      */
-    protected $config;
-
-    /**
-     * An array of Shippo module settings
-     * @var array
-     */
-    protected $settings = array();
+    protected $module;
 
     /**
      * Api model instance
@@ -105,9 +99,15 @@ class Shippo
      * @var \gplcart\core\helpers\Session $session
      */
     protected $session;
-
+    
     /**
-     * @param Config $config
+     * An array of Shippo module settings
+     * @var array
+     */
+    protected $settings = array();
+    
+    /**
+     * @param Module $module
      * @param ShippoApiModel $api
      * @param LanguageModel $language
      * @param UserModel $user
@@ -120,7 +120,7 @@ class Shippo
      * @param SessionHelper $session
      * @param ConvertorHelper $convertor
      */
-    public function __construct(Config $config, ShippoApiModel $api, LanguageModel $language,
+    public function __construct(Module $module, ShippoApiModel $api, LanguageModel $language,
             UserModel $user, PriceModel $price, CurrencyModel $currency, AddressModel $address,
             StoreModel $store, StateModel $state, ShippingModel $shipping, SessionHelper $session,
             ConvertorHelper $convertor)
@@ -137,8 +137,8 @@ class Shippo
         $this->shipping = $shipping;
         $this->convertor = $convertor;
 
-        $this->config = $config;
-        $this->settings = $this->config->getFromModule('shippo');
+        $this->module = $module;
+        $this->settings = $this->module->getSettings('shippo');
     }
 
     /**

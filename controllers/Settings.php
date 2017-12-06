@@ -9,7 +9,6 @@
 
 namespace gplcart\modules\shippo\controllers;
 
-use gplcart\core\models\Module as ModuleModel;
 use gplcart\core\models\Country as CountryModel;
 use gplcart\core\models\Shipping as ShippingModel;
 use gplcart\modules\shippo\models\Api as ShippoApiModel;
@@ -20,12 +19,6 @@ use gplcart\core\controllers\backend\Controller as BackendController;
  */
 class Settings extends BackendController
 {
-
-    /**
-     * Module model instance
-     * @var \gplcart\core\models\Module $module
-     */
-    protected $module;
 
     /**
      * Shipping model instance
@@ -46,18 +39,15 @@ class Settings extends BackendController
     protected $api;
 
     /**
-     * @param ModuleModel $module
      * @param ShippingModel $shipping
      * @param CountryModel $country
      * @param ShippoApiModel $api
      */
-    public function __construct(ModuleModel $module, ShippingModel $shipping,
-            CountryModel $country, ShippoApiModel $api)
+    public function __construct(ShippingModel $shipping, CountryModel $country, ShippoApiModel $api)
     {
         parent::__construct();
 
         $this->api = $api;
-        $this->module = $module;
         $this->country = $country;
         $this->shipping = $shipping;
     }
@@ -71,7 +61,7 @@ class Settings extends BackendController
         $this->setBreadcrumbEditSettings();
 
         $this->setData('countries', $this->country->getIso());
-        $this->setData('settings', $this->config->getFromModule('shippo'));
+        $this->setData('settings', $this->module->getSettings('shippo'));
         $this->setData('methods', $this->getShippingMethodsSettings());
 
         $this->submitSettings();
