@@ -10,7 +10,7 @@
 namespace gplcart\modules\shippo\models;
 
 use gplcart\core\Module;
-use gplcart\core\models\Language as LanguageModel,
+use gplcart\core\models\Translation as TranslationModel,
     gplcart\core\models\User as UserModel,
     gplcart\core\models\Price as PriceModel,
     gplcart\core\models\State as StateModel,
@@ -41,10 +41,10 @@ class Shippo
     protected $api;
 
     /**
-     * Language model instance
-     * @var \gplcart\core\models\Language $language
+     * Translation UI model instance
+     * @var \gplcart\core\models\Translation $translation
      */
-    protected $language;
+    protected $translation;
 
     /**
      * User model class instance
@@ -109,7 +109,7 @@ class Shippo
     /**
      * @param Module $module
      * @param ShippoApiModel $api
-     * @param LanguageModel $language
+     * @param TranslationModel $translation
      * @param UserModel $user
      * @param PriceModel $price
      * @param CurrencyModel $currency
@@ -120,7 +120,7 @@ class Shippo
      * @param SessionHelper $session
      * @param ConvertorHelper $convertor
      */
-    public function __construct(Module $module, ShippoApiModel $api, LanguageModel $language,
+    public function __construct(Module $module, ShippoApiModel $api, TranslationModel $translation,
             UserModel $user, PriceModel $price, CurrencyModel $currency, AddressModel $address,
             StoreModel $store, StateModel $state, ShippingModel $shipping, SessionHelper $session,
             ConvertorHelper $convertor)
@@ -133,9 +133,9 @@ class Shippo
         $this->session = $session;
         $this->address = $address;
         $this->currency = $currency;
-        $this->language = $language;
         $this->shipping = $shipping;
         $this->convertor = $convertor;
+        $this->translation = $translation;
 
         $this->module = $module;
         $this->settings = $this->module->getSettings('shippo');
@@ -190,7 +190,7 @@ class Shippo
         $error_result = array(
             'severity' => 'danger',
             'redirect' => '', // Stay on the same page
-            'message' => $this->language->text('Please recalculate shipping rates')
+            'message' => $this->translation->text('Please recalculate shipping rates')
         );
 
         // Forbid further processing if shipping component has not been set
@@ -322,7 +322,7 @@ class Shippo
         $method['title'] .= " - $price";
 
         if (isset($rates[$service_id]['days'])) {
-            $method['description'] = $this->language->text('Estimated delivery time: @num day(s)', array('@num' => $rates[$service_id]['days']));
+            $method['description'] = $this->translation->text('Estimated delivery time: @num day(s)', array('@num' => $rates[$service_id]['days']));
         }
 
         $method['data'] = $rates[$service_id];

@@ -94,7 +94,7 @@ class Shippo
     public function hookModuleInstallBefore(&$result)
     {
         if (!extension_loaded('curl')) {
-            $result = $this->getLanguage()->text('CURL library is not enabled');
+            $result = $this->getTranslationModel()->text('CURL library is not enabled');
         }
     }
 
@@ -182,7 +182,7 @@ class Shippo
                 'dynamic' => true,
                 'module' => 'shippo',
                 'status' => in_array("shippo_$id", $settings['enabled']),
-                'title' => $this->getLanguage()->text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
+                'title' => $this->getTranslationModel()->text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
             );
         }
     }
@@ -197,12 +197,12 @@ class Shippo
     }
 
     /**
-     * Language model class instance
-     * @return \gplcart\core\models\Language
+     * Translation UI model class instance
+     * @return \gplcart\core\models\Translation
      */
-    protected function getLanguage()
+    protected function getTranslationModel()
     {
-        return Container::get('gplcart\\core\\models\\Language');
+        return Container::get('gplcart\\core\\models\\Translation');
     }
 
 }
