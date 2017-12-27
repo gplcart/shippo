@@ -9,14 +9,14 @@
 
 namespace gplcart\modules\shippo;
 
-use gplcart\core\Module,
-    gplcart\core\Library,
-    gplcart\core\Container;
+use gplcart\core\Library,
+    gplcart\core\Container,
+    gplcart\core\Module as CoreModule;
 
 /**
  * Main class for Shippo module
  */
-class Shippo
+class Module
 {
 
     /**
@@ -32,10 +32,10 @@ class Shippo
     protected $library;
 
     /**
-     * @param Module $module
+     * @param CoreModule $module
      * @param Library $library
      */
-    public function __construct(Module $module, Library $library)
+    public function __construct(CoreModule $module, Library $library)
     {
         $this->module = $module;
         $this->library = $library;
