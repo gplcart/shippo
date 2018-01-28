@@ -9,17 +9,17 @@
 
 namespace gplcart\modules\shippo\models;
 
+use gplcart\core\helpers\Session as SessionHelper;
+use gplcart\core\models\Address as AddressModel;
+use gplcart\core\models\Convertor as ConvertorModel;
+use gplcart\core\models\Currency as CurrencyModel;
+use gplcart\core\models\Price as PriceModel;
+use gplcart\core\models\Shipping as ShippingModel;
+use gplcart\core\models\State as StateModel;
+use gplcart\core\models\Store as StoreModel;
+use gplcart\core\models\Translation as TranslationModel;
+use gplcart\core\models\User as UserModel;
 use gplcart\core\Module;
-use gplcart\core\models\Translation as TranslationModel,
-    gplcart\core\models\User as UserModel,
-    gplcart\core\models\Price as PriceModel,
-    gplcart\core\models\State as StateModel,
-    gplcart\core\models\Currency as CurrencyModel,
-    gplcart\core\models\Address as AddressModel,
-    gplcart\core\models\Store as StoreModel,
-    gplcart\core\models\Shipping as ShippingModel;
-use gplcart\core\helpers\Session as SessionHelper,
-    gplcart\core\helpers\Convertor as ConvertorHelper;
 use gplcart\modules\shippo\models\Api as ShippoApiModel;
 
 /**
@@ -27,7 +27,7 @@ use gplcart\modules\shippo\models\Api as ShippoApiModel;
  */
 class Shippo
 {
-    
+
     /**
      * Module class instance
      * @var \gplcart\core\Module $module
@@ -89,8 +89,8 @@ class Shippo
     protected $store;
 
     /**
-     * Convertor class instance
-     * @var \gplcart\core\helpers\Convertor $convertor
+     * Convertor model class instance
+     * @var \gplcart\core\models\Convertor $convertor
      */
     protected $convertor;
 
@@ -99,13 +99,13 @@ class Shippo
      * @var \gplcart\core\helpers\Session $session
      */
     protected $session;
-    
+
     /**
      * An array of Shippo module settings
      * @var array
      */
     protected $settings = array();
-    
+
     /**
      * @param Module $module
      * @param ShippoApiModel $api
@@ -118,12 +118,12 @@ class Shippo
      * @param StateModel $state
      * @param ShippingModel $shipping
      * @param SessionHelper $session
-     * @param ConvertorHelper $convertor
+     * @param ConvertorModel $convertor
      */
     public function __construct(Module $module, ShippoApiModel $api, TranslationModel $translation,
-            UserModel $user, PriceModel $price, CurrencyModel $currency, AddressModel $address,
-            StoreModel $store, StateModel $state, ShippingModel $shipping, SessionHelper $session,
-            ConvertorHelper $convertor)
+                                UserModel $user, PriceModel $price, CurrencyModel $currency, AddressModel $address,
+                                StoreModel $store, StateModel $state, ShippingModel $shipping, SessionHelper $session,
+                                ConvertorModel $convertor)
     {
         $this->api = $api;
         $this->user = $user;
@@ -322,7 +322,8 @@ class Shippo
         $method['title'] .= " - $price";
 
         if (isset($rates[$service_id]['days'])) {
-            $method['description'] = $this->translation->text('Estimated delivery time: @num day(s)', array('@num' => $rates[$service_id]['days']));
+            $method['description'] = $this->translation->text('Estimated delivery time: @num day(s)', array(
+                '@num' => $rates[$service_id]['days']));
         }
 
         $method['data'] = $rates[$service_id];
