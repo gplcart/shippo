@@ -9,9 +9,9 @@
 
 namespace gplcart\modules\shippo;
 
-use gplcart\core\Module,
-    gplcart\core\Library,
-    gplcart\core\Container;
+use gplcart\core\Container;
+use gplcart\core\Library;
+use gplcart\core\Module;
 
 /**
  * Main class for Shippo module
@@ -48,8 +48,8 @@ class Main
     public function hookLibraryList(array &$libraries)
     {
         $libraries['shippo'] = array(
-            'name' => /* @text */'Shippo',
-            'description' => /* @text */'Shipping API PHP library (USPS, FedEx, UPS and more)',
+            'name' => 'Shippo', // @text
+            'description' => 'Shipping API PHP library (USPS, FedEx, UPS and more)', // @text
             'url' => 'https://github.com/goshippo/shippo-php-client',
             'download' => 'https://github.com/goshippo/shippo-php-client/archive/v1.3.2.zip',
             'type' => 'php',
@@ -80,7 +80,9 @@ class Main
 
         $routes['admin/tool/shippo'] = array(
             'access' => 'shippo_label',
-            'menu' => array('admin' => /* @text */'Shipping labels'),
+            'menu' => array(
+                'admin' => 'Shipping labels' // @text
+            ),
             'handlers' => array(
                 'controller' => array('gplcart\\modules\\shippo\\controllers\\Label', 'listLabel')
             )
@@ -94,7 +96,7 @@ class Main
     public function hookModuleInstallBefore(&$result)
     {
         if (!extension_loaded('curl')) {
-            $result = $this->getTranslationModel()->text('CURL library is not enabled');
+            $result = gplcart_text('CURL library is not enabled');
         }
     }
 
@@ -104,7 +106,7 @@ class Main
      */
     public function hookUserRolePermissions(array &$permissions)
     {
-        $permissions['shippo_label'] = /* @text */'Shippo: view and buy labels';
+        $permissions['shippo_label'] = 'Shippo: view and buy labels'; // @text
     }
 
     /**
@@ -182,7 +184,7 @@ class Main
                 'dynamic' => true,
                 'module' => 'shippo',
                 'status' => in_array("shippo_$id", $settings['enabled']),
-                'title' => $this->getTranslationModel()->text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
+                'title' => gplcart_text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
             );
         }
     }
@@ -193,16 +195,9 @@ class Main
      */
     public function getModel()
     {
-        return Container::get('gplcart\\modules\\shippo\\models\\Shippo');
-    }
-
-    /**
-     * Translation UI model class instance
-     * @return \gplcart\core\models\Translation
-     */
-    protected function getTranslationModel()
-    {
-        return Container::get('gplcart\\core\\models\\Translation');
+        /** @var \gplcart\modules\shippo\models\Shippo $instance */
+        $instance = Container::get('gplcart\\modules\\shippo\\models\\Shippo');
+        return $instance;
     }
 
 }
