@@ -1,36 +1,36 @@
 {
-    "name": "Shippo",
-    "version": "1.0.0-dev",
-    "description": "Adds various shipping methods using Shippo's multi-carrier shipping API",
-    "author": "Iurii Makukh <gplcart.software@gmail.com>",
-    "core": "1.x",
-    "license": "GPL-3.0+",
-    "configure": "admin/module/settings/shippo",
-    "settings": {
-        "key": {
-            "live": "",
-            "test": ""
-        },
-        "enabled": [],
-        "default": {
-            "method": "",
-            "price": 0,
-            "width": 0,
-            "height": 0,
-            "length": 0,
-            "weight": 0
-        },
-        "sender": {
-            "name": "",
-            "company": "",
-            "street1": "",
-            "city": "",
-            "state": "",
-            "zip": "",
-            "country": "",
-            "phone": "",
-            "email": ""
-        }
+  "name": "Shippo",
+  "version": "1.0.0-dev",
+  "description": "Adds various shipping methods using Shippo's multi-carrier shipping API",
+  "author": "Iurii Makukh <gplcart.software@gmail.com>",
+  "core": "1.x",
+  "license": "GPL-3.0+",
+  "configure": "admin/module/settings/shippo",
+  "settings": {
+    "key": {
+      "live": "",
+      "test": ""
+    },
+    "enabled": [],
+    "default": {
+      "method": "",
+      "price": 0,
+      "width": 0,
+      "height": 0,
+      "length": 0,
+      "weight": 0
+    },
+    "sender": {
+      "name": "",
+      "company": "",
+      "street1": "",
+      "city": "",
+      "state": "",
+      "zip": "",
+      "country": "",
+      "phone": "",
+      "email": ""
     }
+  }
 }
 
