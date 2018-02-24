@@ -9,28 +9,17 @@
 
 namespace gplcart\modules\shippo\controllers;
 
-use gplcart\core\models\Country as CountryModel;
-use gplcart\core\models\Shipping as ShippingModel;
-use gplcart\modules\shippo\models\Api as ShippoApiModel;
-use gplcart\core\controllers\backend\Controller as BackendController;
+use Exception;
+use gplcart\core\controllers\backend\Controller;
+use gplcart\core\models\Country;
+use gplcart\core\models\Shipping;
+use gplcart\modules\shippo\models\Api;
 
 /**
  * Handles incoming requests and outputs data related to Shippo module
  */
-class Settings extends BackendController
+class Settings extends Controller
 {
-
-    /**
-     * Shipping model instance
-     * @var \gplcart\core\models\Shipping $shipping
-     */
-    protected $shipping;
-
-    /**
-     * Country model instance
-     * @var \gplcart\core\models\Country $country
-     */
-    protected $country;
 
     /**
      * Shippo API model instance
@@ -39,11 +28,24 @@ class Settings extends BackendController
     protected $api;
 
     /**
-     * @param ShippingModel $shipping
-     * @param CountryModel $country
-     * @param ShippoApiModel $api
+     * Country model instance
+     * @var \gplcart\core\models\Country $country
      */
-    public function __construct(ShippingModel $shipping, CountryModel $country, ShippoApiModel $api)
+    protected $country;
+
+    /**
+     * Shipping model instance
+     * @var \gplcart\core\models\Shipping $shipping
+     */
+    protected $shipping;
+
+    /**
+     * Settings constructor.
+     * @param Shipping $shipping
+     * @param Country $country
+     * @param Api $api
+     */
+    public function __construct(Shipping $shipping, Country $country, Api $api)
     {
         parent::__construct();
 
@@ -82,8 +84,7 @@ class Settings extends BackendController
      */
     protected function setTitleEditSettings()
     {
-        $vars = array('%name' => $this->text('Shippo'));
-        $title = $this->text('Edit %name settings', $vars);
+        $title = $this->text('Edit %name settings', array('%name' => $this->text('Shippo')));
         $this->setTitle($title);
     }
 
@@ -122,10 +123,16 @@ class Settings extends BackendController
      */
     protected function validateSettings()
     {
-        $this->setSubmitted('settings');
+        try {
 
-        if ($this->api->isValidAddress($this->getSubmitted('sender')) !== true) {
-            $this->setMessage($this->text('Shippo was unable to validate sender\'s address. Please check it once again!'), 'warning', true);
+            $this->setSubmitted('settings');
+
+            if ($this->api->isValidAddress($this->getSubmitted('sender')) !== true) {
+                $this->setMessage($this->text("Shippo was unable to validate sender's address"), 'warning', true);
+            }
+
+        } catch (Exception $ex) {
+            $this->setMessage($ex->getMessage(), 'warning', true);
         }
 
         return !$this->hasErrors();

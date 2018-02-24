@@ -9,14 +9,15 @@
 
 namespace gplcart\modules\shippo\controllers;
 
-use gplcart\core\models\Order as OrderModel;
-use gplcart\modules\shippo\models\Api as ModuleShippoModel;
-use gplcart\core\controllers\backend\Controller as BackendController;
+use Exception;
+use gplcart\core\controllers\backend\Controller;
+use gplcart\core\models\Order;
+use gplcart\modules\shippo\models\Api;
 
 /**
  * Handles incoming requests and outputs data related to Shippo module
  */
-class Label extends BackendController
+class Label extends Controller
 {
 
     /**
@@ -32,10 +33,16 @@ class Label extends BackendController
     protected $order;
 
     /**
-     * @param OrderModel $order
-     * @param ModuleShippoModel $api
+     * @var array
      */
-    public function __construct(OrderModel $order, ModuleShippoModel $api)
+    protected $data_limit;
+
+    /**
+     * Label constructor.
+     * @param Order $order
+     * @param Api $api
+     */
+    public function __construct(Order $order, Api $api)
     {
         parent::__construct();
 
@@ -49,16 +56,22 @@ class Label extends BackendController
     public function listLabel()
     {
         $this->actionLabel();
-
         $this->setTitleListLabel();
         $this->setBreadcrumbListLabel();
         $this->setFilterListLabel();
+        $this->setPagerLabel();
 
-        $limit = $this->setPager(array('total' => $this->getTotalListLabel()));
+        $this->setData('orders', $this->getOrderListLabel());
         $this->setData('statuses', $this->order->getStatuses());
-        $this->setData('orders', $this->getOrdersListLabel($limit));
-
         $this->outputListLabel();
+    }
+
+    /**
+     * Sets pager
+     */
+    protected function setPagerLabel()
+    {
+        $this->data_limit = $this->setPager(array('total' => $this->getTotalListLabel()));
     }
 
     /**
@@ -72,14 +85,13 @@ class Label extends BackendController
 
     /**
      * Returns an array of Shippo shipping methods
-     * @param array $limit
      * @return array
      */
-    protected function getOrdersListLabel(array $limit)
+    protected function getOrderListLabel()
     {
-        $options = array(
-            'limit' => $limit,
-            'shipping_prefix' => 'shippo_') + $this->query_filter;
+        $options = $this->query_filter;
+        $options['limit'] = $this->data_limit;
+        $options['shipping_prefix'] = 'shippo_';
 
         return (array) $this->order->getList($options);
     }
@@ -146,7 +158,11 @@ class Label extends BackendController
             return null;
         }
 
-        $response = $this->api->getLabel($object_id);
+        try {
+            $response = $this->api->getLabel($object_id);
+        } catch (Exception $ex) {
+            $this->redirect('admin/tool/shippo', $ex->getMessage(), 'warning');
+        }
 
         if (empty($response['tracking_number']) || empty($response['label_url'])) {
             $this->redirect('admin/tool/shippo', $this->text('An error occurred'), 'warning');
@@ -161,7 +177,11 @@ class Label extends BackendController
 
         $this->order->update($order_id, $data);
 
-        $vars = array('%num' => $response['tracking_number'], '@url' => $response['label_url']);
+        $vars = array(
+            '@url' => $response['label_url'],
+            '%num' => $response['tracking_number']
+        );
+
         $message = $this->text('Label has been <a target="_blank" href="@url">created</a>. Tracking number: %num', $vars);
         $this->redirect('admin/tool/shippo', $message, 'success');
     }

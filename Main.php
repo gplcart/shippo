@@ -90,17 +90,6 @@ class Main
     }
 
     /**
-     * Implements hook "module.install.before"
-     * @param mixed $result
-     */
-    public function hookModuleInstallBefore(&$result)
-    {
-        if (!extension_loaded('curl')) {
-            $result = gplcart_text('CURL library is not enabled');
-        }
-    }
-
-    /**
      * Implements hook "user.role.permissions"
      * @param array $permissions
      */
@@ -115,7 +104,9 @@ class Main
      */
     public function hookOrderCalculateBefore(array &$data)
     {
-        $this->getModel()->calculate($data);
+        if (!empty($data['request_shipping_methods'])) {
+            $this->calculate($data);
+        }
     }
 
     /**
@@ -135,7 +126,7 @@ class Main
      */
     public function hookShippingMethods(array &$methods)
     {
-        $this->setShippingMethods($methods);
+        $methods = array_merge($methods, $this->getShippingMethods());
     }
 
     /**
@@ -171,22 +162,36 @@ class Main
     }
 
     /**
-     * Sets module shipping methods
-     * @param array $methods
+     * Returns an array of Shippo's shipping methods
+     * @param bool $only_enabled
+     * @return array
      */
-    protected function setShippingMethods(array &$methods)
+    public function getShippingMethods($only_enabled = true)
     {
         $settings = $this->module->getSettings('shippo');
+
+        $methods = array();
 
         foreach ($this->getModel()->getServiceNames() as $id => $info) {
             list($carrier, $service) = $info;
             $methods["shippo_$id"] = array(
                 'dynamic' => true,
                 'module' => 'shippo',
-                'status' => in_array("shippo_$id", $settings['enabled']),
+                'status' => $only_enabled ? in_array("shippo_$id", $settings['enabled']) : null,
                 'title' => gplcart_text('@carrier - @service', array('@carrier' => $carrier, '@service' => $service))
             );
         }
+
+        return $methods;
+    }
+
+    /**
+     * Calculate shipping
+     * @param $data
+     */
+    public function calculate(&$data)
+    {
+        $this->getModel()->calculate($data);
     }
 
     /**

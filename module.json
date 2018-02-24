@@ -31,6 +31,9 @@
       "phone": "",
       "email": ""
     }
-  }
+  },
+  "extensions": [
+    "curl"
+  ]
 }
 

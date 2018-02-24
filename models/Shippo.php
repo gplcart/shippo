@@ -9,18 +9,18 @@
 
 namespace gplcart\modules\shippo\models;
 
-use gplcart\core\helpers\Session as SessionHelper;
-use gplcart\core\models\Address as AddressModel;
-use gplcart\core\models\Convertor as ConvertorModel;
-use gplcart\core\models\Currency as CurrencyModel;
-use gplcart\core\models\Price as PriceModel;
-use gplcart\core\models\Shipping as ShippingModel;
-use gplcart\core\models\State as StateModel;
-use gplcart\core\models\Store as StoreModel;
-use gplcart\core\models\Translation as TranslationModel;
-use gplcart\core\models\User as UserModel;
+use Exception;
+use gplcart\core\helpers\Session;
+use gplcart\core\models\Address;
+use gplcart\core\models\Convertor;
+use gplcart\core\models\Currency;
+use gplcart\core\models\Price;
+use gplcart\core\models\Shipping;
+use gplcart\core\models\State;
+use gplcart\core\models\Store;
+use gplcart\core\models\Translation;
+use gplcart\core\models\User;
 use gplcart\core\Module;
-use gplcart\modules\shippo\models\Api as ShippoApiModel;
 
 /**
  * Manages basic behaviors and data related to Shippo module
@@ -107,23 +107,23 @@ class Shippo
     protected $settings = array();
 
     /**
+     * Shippo constructor.
      * @param Module $module
-     * @param ShippoApiModel $api
-     * @param TranslationModel $translation
-     * @param UserModel $user
-     * @param PriceModel $price
-     * @param CurrencyModel $currency
-     * @param AddressModel $address
-     * @param StoreModel $store
-     * @param StateModel $state
-     * @param ShippingModel $shipping
-     * @param SessionHelper $session
-     * @param ConvertorModel $convertor
+     * @param Api $api
+     * @param Translation $translation
+     * @param User $user
+     * @param Price $price
+     * @param Currency $currency
+     * @param Address $address
+     * @param Store $store
+     * @param State $state
+     * @param Shipping $shipping
+     * @param Session $session
+     * @param Convertor $convertor
      */
-    public function __construct(Module $module, ShippoApiModel $api, TranslationModel $translation,
-                                UserModel $user, PriceModel $price, CurrencyModel $currency, AddressModel $address,
-                                StoreModel $store, StateModel $state, ShippingModel $shipping, SessionHelper $session,
-                                ConvertorModel $convertor)
+    public function __construct(Module $module, Api $api, Translation $translation, User $user, Price $price,
+                                Currency $currency, Address $address, Store $store, State $state, Shipping $shipping,
+                                Session $session, Convertor $convertor)
     {
         $this->api = $api;
         $this->user = $user;
@@ -165,11 +165,9 @@ class Shippo
      */
     public function calculate(array &$data)
     {
-        if ($data['request_shipping_methods']) {
-            $address = $this->getSourceAddress($data);
-            $rates = $this->getRates($address, $data['cart'], $data['order']);
-            $this->setShippingMethodsCheckout($data, $rates);
-        }
+        $address = $this->getSourceAddress($data);
+        $rates = $this->getRates($address, $data['cart'], $data['order']);
+        $this->setShippingMethodsCheckout($data, $rates);
     }
 
     /**
@@ -206,7 +204,9 @@ class Shippo
         // Forbid further processing and redirect back if shipping rates don't match
         // Validate only "normal" submits.
         // In admin mode shipping prices can be adjusted by administrator
-        if (empty($options['admin']) && isset($method['price']) && $method['price'] != $order['data']['components']['shipping']['price']) {
+        if (empty($options['admin'])
+            && isset($method['price'])
+            && $method['price'] != $order['data']['components']['shipping']['price']) {
             $result = $error_result;
             return false;
         }
@@ -248,12 +248,19 @@ class Shippo
             return $session_rates[$cache_id];
         }
 
-        if ($this->api->isValidAddress($to_address) !== true) {
-            return $this->getDefaultRates();
-        }
+        try {
 
-        $parcel = $this->getParcel($cart, $order);
-        $response = $this->api->getRates($this->settings['sender'], $to_address, $parcel);
+            if ($this->api->isValidAddress($to_address) !== true) {
+                return $this->getDefaultRates();
+            }
+
+            $parcel = $this->getParcel($cart, $order);
+            $response = $this->api->getRates($this->settings['sender'], $to_address, $parcel);
+
+        } catch (Exception $ex) {
+            trigger_error($ex->getMessage());
+            return array();
+        }
 
         if (empty($response)) {
             return $this->getDefaultRates();
@@ -374,6 +381,7 @@ class Shippo
         }
 
         $name = array();
+
         if (isset($data['first_name'])) {
             $name[] = $data['first_name'];
         }
@@ -385,6 +393,7 @@ class Shippo
         }
 
         $city = '';
+
         if (isset($data['city_name'])) {
             $city = $data['city_name'];
         } else if (isset($data['city_id']) && !is_numeric($data['city_id'])) {
@@ -392,6 +401,7 @@ class Shippo
         }
 
         $state = '';
+
         if (isset($data['state_name'])) {
             $state = $data['state_name'];
         } else if (isset($data['state_id'])) {

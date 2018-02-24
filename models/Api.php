@@ -9,8 +9,9 @@
 
 namespace gplcart\modules\shippo\models;
 
-use gplcart\core\Library,
-    gplcart\core\Module;
+use gplcart\core\Library;
+use gplcart\core\Module;
+use LogicException;
 
 /**
  * Manages basic behaviors and data related to Shippo API
@@ -61,32 +62,33 @@ class Api
      * @param array $to
      * @param array $parcel
      * @return array
+     * @throws LogicException
      */
     public function getRates(array $from, array $to, array $parcel)
     {
         $this->library->load('shippo');
 
-        try {
-
-            \Shippo::setApiKey($this->getToken());
-
-            $shipment = array(
-                'async' => false,
-                'address_to' => $to,
-                'address_from' => $from,
-                'parcels' => array($parcel)
-            );
-
-            $result = \Shippo_Shipment::create($shipment);
-        } catch (\Exception $ex) {
-            $result = array();
+        if (!class_exists('Shippo') || !class_exists('Shippo_Shipment')) {
+            throw new LogicException('Failed to load Shippo library');
         }
+
+        \Shippo::setApiKey($this->getToken());
+
+        $shipment = array(
+            'async' => false,
+            'address_to' => $to,
+            'address_from' => $from,
+            'parcels' => array($parcel)
+        );
+
+        $result = \Shippo_Shipment::create($shipment);
 
         if (empty($result['rates'])) {
             return array();
         }
 
         $rates = array();
+
         foreach ($result['rates'] as $rate) {
             $rates[$rate['servicelevel']['token']] = json_decode($rate, true);
         }
@@ -99,17 +101,19 @@ class Api
      * @param array $address
      * @param array $options
      * @return array
+     * @throws LogicException
      */
     public function createAddress(array $address, array $options = array())
     {
         $this->library->load('shippo');
 
-        try {
-            \Shippo::setApiKey($this->getToken());
-            $response = \Shippo_Address::create(array_merge($address, $options));
-        } catch (\Exception $ex) {
-            $response = array();
+        if (!class_exists('Shippo') || !class_exists('Shippo_Address')) {
+            throw new LogicException('Failed to load Shippo library');
         }
+
+        \Shippo::setApiKey($this->getToken());
+
+        $response = \Shippo_Address::create(array_merge($address, $options));
 
         if (!is_array($response)) {
             $response = json_decode($response, true);
@@ -140,6 +144,7 @@ class Api
         }
 
         $messages = array();
+
         foreach ($result['validation_results']['messages'] as $message) {
             $messages[] = $message['text'];
         }
@@ -152,18 +157,20 @@ class Api
      * @param string $object_id
      * @param array $options
      * @return array
+     * @throws LogicException
      */
     public function getLabel($object_id, array $options = array())
     {
         $this->library->load('shippo');
 
-        try {
-            \Shippo::setApiKey($this->getToken());
-            $default = array('rate' => $object_id, 'async' => false);
-            $response = \Shippo_Transaction::create(array_merge($default, $options));
-        } catch (\Exception $ex) {
-            $response = array();
+        if (!class_exists('Shippo') || !class_exists('Shippo_Transaction')) {
+            throw new LogicException('Failed to load Shippo library');
         }
+
+        \Shippo::setApiKey($this->getToken());
+
+        $default = array('rate' => $object_id, 'async' => false);
+        $response = \Shippo_Transaction::create(array_merge($default, $options));
 
         if (!is_array($response)) {
             $response = json_decode($response, true);
