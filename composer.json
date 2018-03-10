@@ -14,9 +14,7 @@
   ],
   "license": "GPL-3.0-or-later",
   "require": {
-    "gplcart/composer-module-installer": "*",
-    "ext-curl": "*"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+    "gplcart/composer-module-installer": "^1",
+    "shippo/shippo-php": "1.3.2"
+  }
 }
