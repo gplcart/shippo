@@ -16,7 +16,7 @@ use gplcart\core\models\Convertor;
 use gplcart\core\models\Currency;
 use gplcart\core\models\Price;
 use gplcart\core\models\Shipping;
-use gplcart\core\models\State;
+use gplcart\core\models\CountryState;
 use gplcart\core\models\Store;
 use gplcart\core\models\Translation;
 use gplcart\core\models\User;
@@ -66,7 +66,7 @@ class Shippo
 
     /**
      * State model class instance
-     * @var \gplcart\core\models\State $state
+     * @var \gplcart\core\models\CountryState $state
      */
     protected $state;
 
@@ -116,13 +116,13 @@ class Shippo
      * @param Currency $currency
      * @param Address $address
      * @param Store $store
-     * @param State $state
+     * @param CountryState $state
      * @param Shipping $shipping
      * @param Session $session
      * @param Convertor $convertor
      */
     public function __construct(Module $module, Api $api, Translation $translation, User $user, Price $price,
-                                Currency $currency, Address $address, Store $store, State $state, Shipping $shipping,
+                                Currency $currency, Address $address, Store $store, CountryState $state, Shipping $shipping,
                                 Session $session, Convertor $convertor)
     {
         $this->api = $api;
