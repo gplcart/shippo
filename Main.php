@@ -10,7 +10,6 @@
 namespace gplcart\modules\shippo;
 
 use gplcart\core\Container;
-use gplcart\core\Library;
 use gplcart\core\Module;
 
 /**
@@ -26,19 +25,11 @@ class Main
     protected $module;
 
     /**
-     * Library class instance
-     * @var \gplcart\core\Library $library
-     */
-    protected $library;
-
-    /**
      * @param Module $module
-     * @param Library $library
      */
-    public function __construct(Module $module, Library $library)
+    public function __construct(Module $module)
     {
         $this->module = $module;
-        $this->library = $library;
     }
 
     /**
@@ -124,50 +115,19 @@ class Main
     }
 
     /**
-     * Implements hook "module.enable.after"
-     */
-    public function hookModuleEnableAfter()
-    {
-        $this->library->clearCache();
-    }
-
-    /**
-     * Implements hook "module.disable.after"
-     */
-    public function hookModuleDisableAfter()
-    {
-        $this->library->clearCache();
-    }
-
-    /**
-     * Implements hook "module.install.after"
-     */
-    public function hookModuleInstallAfter()
-    {
-        $this->library->clearCache();
-    }
-
-    /**
-     * Implements hook "module.uninstall.after"
-     */
-    public function hookModuleUninstallAfter()
-    {
-        $this->library->clearCache();
-    }
-
-    /**
      * Returns an array of Shippo's shipping methods
      * @param bool $only_enabled
      * @return array
      */
     public function getShippingMethods($only_enabled = true)
     {
+        $methods = array();
         $settings = $this->module->getSettings('shippo');
 
-        $methods = array();
-
         foreach ($this->getModel()->getServiceNames() as $id => $info) {
+
             list($carrier, $service) = $info;
+
             $methods["shippo_$id"] = array(
                 'dynamic' => true,
                 'module' => 'shippo',
