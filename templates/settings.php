@@ -67,7 +67,7 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="col-md-2 control-label"><?php echo $this->text('State'); ?></label>
+      <label class="col-md-2 control-label"><?php echo $this->text('Country state'); ?></label>
       <div class="col-md-4">
         <input name="settings[sender][state]" class="form-control" value="<?php echo $this->e($settings['sender']['state']); ?>">
       </div>
