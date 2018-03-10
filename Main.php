@@ -53,15 +53,9 @@ class Main
             'url' => 'https://github.com/goshippo/shippo-php-client',
             'download' => 'https://github.com/goshippo/shippo-php-client/archive/v1.3.2.zip',
             'type' => 'php',
-            'version_source' => array(
-                'lines' => 2,
-                'pattern' => '/.*(\\d+\\.+\\d+\\.+\\d+)/',
-                'file' => 'vendor/shippo/shippo-php/VERSION'
-            ),
+            'version' => '1.3.2',
             'module' => 'shippo',
-            'files' => array(
-                'vendor/autoload.php'
-            )
+            'vendor' => 'shippo/shippo-php'
         );
     }
 
